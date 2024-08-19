@@ -62,6 +62,7 @@
 **********************************************************************************************/
 
 #include "raylib.h"             // Declares module functions
+#include <ctype.h>
 
 // Check if config flags have been externally provided on compilation line
 #if !defined(EXTERNAL_CONFIG_FLAGS)
@@ -320,28 +321,37 @@ Image LoadImageAnim(const char *fileName, int *frames)
 Image LoadImageFromMemory(const char *fileType, const unsigned char *fileData, int dataSize)
 {
     Image image = { 0 };
+    char *lcFileType;
+
+    lcFileType = malloc(strlen(fileType) + 1);
+    memset(lcFileType, 0, strlen(fileType) + 1);
+
+    for(int i = 0; fileType[i] != '\0'; i++)
+    {
+        lcFileType[i] = tolower(fileType[i]);
+    }
 
     if ((false)
 #if defined(SUPPORT_FILEFORMAT_PNG)
-        || (strcmp(fileType, ".png") == 0)
+        || (strcmp(lcFileType, ".png") == 0)
 #endif
 #if defined(SUPPORT_FILEFORMAT_BMP)
-        || (strcmp(fileType, ".bmp") == 0)
+        || (strcmp(lcFileType, ".bmp") == 0)
 #endif
 #if defined(SUPPORT_FILEFORMAT_TGA)
-        || (strcmp(fileType, ".tga") == 0)
+        || (strcmp(lcFileType, ".tga") == 0)
 #endif
 #if defined(SUPPORT_FILEFORMAT_JPG)
-        || ((strcmp(fileType, ".jpg") == 0) || (strcmp(fileType, ".jpeg") == 0))
+        || ((strcmp(lcFileType, ".jpg") == 0) || (strcmp(lcFileType, ".jpeg") == 0))
 #endif
 #if defined(SUPPORT_FILEFORMAT_GIF)
-        || (strcmp(fileType, ".gif") == 0)
+        || (strcmp(lcFileType, ".gif") == 0)
 #endif
 #if defined(SUPPORT_FILEFORMAT_PIC)
-        || (strcmp(fileType, ".pic") == 0)
+        || (strcmp(lcFileType, ".pic") == 0)
 #endif
 #if defined(SUPPORT_FILEFORMAT_PSD)
-        || (strcmp(fileType, ".psd") == 0)
+        || (strcmp(lcFileType, ".psd") == 0)
 #endif
         )
     {
@@ -400,31 +410,31 @@ Image LoadImageFromMemory(const char *fileType, const unsigned char *fileData, i
     }
 #endif
 #if defined(SUPPORT_FILEFORMAT_DDS)
-    else if (strcmp(fileType, ".dds") == 0)
+    else if (strcmp(lcFileType, ".dds") == 0)
     {
         image.data = rl_load_dds_from_memory(fileData, dataSize, &image.width, &image.height, &image.format, &image.mipmaps);
     }
 #endif
 #if defined(SUPPORT_FILEFORMAT_PKM)
-    else if (strcmp(fileType, ".pkm") == 0)
+    else if (strcmp(lcFileType, ".pkm") == 0)
     {
         image.data = rl_load_pkm_from_memory(fileData, dataSize, &image.width, &image.height, &image.format, &image.mipmaps);
     }
 #endif
 #if defined(SUPPORT_FILEFORMAT_KTX)
-    else if (strcmp(fileType, ".ktx") == 0)
+    else if (strcmp(lcFileType, ".ktx") == 0)
     {
         image.data = rl_load_ktx_from_memory(fileData, dataSize, &image.width, &image.height, &image.format, &image.mipmaps);
     }
 #endif
 #if defined(SUPPORT_FILEFORMAT_PVR)
-    else if (strcmp(fileType, ".pvr") == 0)
+    else if (strcmp(lcFileType, ".pvr") == 0)
     {
         image.data = rl_load_pvr_from_memory(fileData, dataSize, &image.width, &image.height, &image.format, &image.mipmaps);
     }
 #endif
 #if defined(SUPPORT_FILEFORMAT_ASTC)
-    else if (strcmp(fileType, ".astc") == 0)
+    else if (strcmp(lcFileType, ".astc") == 0)
     {
         image.data = rl_load_astc_from_memory(fileData, dataSize, &image.width, &image.height, &image.format, &image.mipmaps);
     }
@@ -434,6 +444,7 @@ Image LoadImageFromMemory(const char *fileType, const unsigned char *fileData, i
     if (image.data != NULL) TRACELOG(LOG_INFO, "IMAGE: Data loaded successfully (%ix%i | %s | %i mipmaps)", image.width, image.height, rlGetPixelFormatName(image.format), image.mipmaps);
     else TRACELOG(LOG_WARNING, "IMAGE: Failed to load image data");
 
+    free(lcFileType);
     return image;
 }
 
