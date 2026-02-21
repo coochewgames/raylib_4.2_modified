@@ -167,6 +167,11 @@ typedef struct tagBITMAPINFOHEADER {
 #define MA_NO_WAV
 #define MA_NO_FLAC
 #define MA_NO_MP3
+#define MA_NO_NULL
+#if defined(__APPLE__)
+    #define MA_ENABLE_ONLY_SPECIFIC_BACKENDS
+    #define MA_ENABLE_COREAUDIO
+#endif
 #define MINIAUDIO_IMPLEMENTATION
 //#define MA_DEBUG_OUTPUT
 #include "external/miniaudio.h"         // Audio device initialization and management
